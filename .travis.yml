@@ -45,6 +45,6 @@ after_success:
   - bash upload.sh APPNAME*.AppImage*
   
 branches: appimage
-  except:
-    - # Do not build tags that we create when we upload to GitHub Releases
-    - /^(?i:continuous)/
+except:
+  - # Do not build tags that we create when we upload to GitHub Releases
+  - /^(?i:continuous)/
