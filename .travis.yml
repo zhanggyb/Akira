@@ -6,7 +6,7 @@ dist: xenial
 install:
  - sudo apt-add-repository ppa:vala-team/ppa -y
  - sudo apt-add-repository ppa:mc3man/trusty-media -y
- - sudo apt-add-repository ppa:granite -y
+ - sudo add-apt-repository ppa:elementary-os/os-patches -y
  - sudo add-apt-repository ppa:elementary-os/stable -y
  - sudo apt-get update -q
  - sudo apt-get install -y checkinstall build-essential libgtk-3-dev libglib2.0-dev libjson-glib-dev valac libgranite-dev libgudev-1.0-dev libevdev-dev libgtksourceview-3.0-dev libxml2-dev libgee-0.8-dev
