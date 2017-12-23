@@ -47,14 +47,14 @@ public class Akira.Window : Gtk.ApplicationWindow {
     }
 
     private void build_ui () {
-        Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = settings.dark_theme;
+        //  Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = settings.dark_theme;
 
-        var css_provider = new Gtk.CssProvider ();
-        css_provider.load_from_resource ("/com/github/alecaddd/akira/stylesheet.css");
+        //  var css_provider = new Gtk.CssProvider ();
+        //  css_provider.load_from_resource ("/com/github/alecaddd/akira/stylesheet.css");
         
-        Gtk.StyleContext.add_provider_for_screen (
-            Gdk.Screen.get_default (), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        );
+        //  Gtk.StyleContext.add_provider_for_screen (
+        //      Gdk.Screen.get_default (), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        //  );
 
         set_titlebar (headerbar);
         add (main_window);
