@@ -5,8 +5,8 @@ dist: trusty
 
 install:
  - sudo apt-add-repository ppa:vala-team/ppa -y
+ - sudo add-apt-repository ppa:elementary-os/stable
  - sudo apt-add-repository ppa:mc3man/trusty-media -y
- - sudo apt-add-repository ppa:mc3man/xerus-media -y
  - sudo apt-get update -q
  - sudo apt-get install -y checkinstall build-essential libgtk-3-dev=3.16 libglib2.0-dev libjson-glib-dev valac libgranite-dev=0.5 libgudev-1.0-dev libevdev-dev libgtksourceview-3.0-dev libxml2-dev libgee-0.8-dev
 
