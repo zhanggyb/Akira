@@ -1,7 +1,7 @@
 language: vala
 compiler: gcc
 sudo: require
-dist: xenial
+dist: trusty
 
 install:
  - sudo apt-add-repository ppa:vala-team/ppa -y
