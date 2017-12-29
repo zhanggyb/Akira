@@ -8,36 +8,42 @@ install:
  - sudo add-apt-repository ppa:mc3man/trusty-media -y
  - sudo add-apt-repository ppa:elementary-os/stable -y
  - sudo add-apt-repository ppa:elementary-os/os-patches -y
+ - echo "Package: *" > /etc/apt/preferences.d/elementary-stable
+ - echo "Pin: release o=LP-PPA-elementary-os-stable" >> /etc/apt/preferences.d/elementary-stable
+ - echo "Pin-Priority: 1000" >> /etc/apt/preferences.d/elementary-stable
+ - echo "Package: *" > /etc/apt/preferences.d/elementary-patches
+ - echo "Pin: release o=LP-PPA-elementary-os-os-patches" >> /etc/apt/preferences.d/elementary-patches
+ - echo "Pin-Priority: 1000" >> /etc/apt/preferences.d/elementary-patches
  - sudo apt-get update -qq
  - sudo apt-get install -y checkinstall build-essential libgirepository1.0-dev libwebkitgtk-3.0-dev libgtksourceview-3.0-dev libgtk-3-dev libglib2.0-dev libjson-glib-dev valac libgranite-dev libgudev-1.0-dev libevdev-dev libxml2-dev libgee-0.8-dev
 
 script:
-  - mkdir -p appdir/usr/bin
+  - mkdir -p ./appdir/usr/bin
   - cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
   - make -j$(nproc)
-  - make DESTDIR=appdir -j$(nproc) install ; find appdir/
-  - mv appdir/usr/bin/com.github.alecaddd.akira appdir/usr/bin/akira
-  - mkdir -p appdir/usr/share/applications ; cp data/com.github.alecaddd.akira.desktop appdir/usr/share/applications/akira.desktop
-  - sed -i -e 's|com.github.alecaddd.||g' appdir/usr/share/applications/akira.desktop
-  - mkdir -p appdir/usr/share/icons/hicolor/16x16/apps/
-  - cp data/assets/icons/16x16/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/16x16/apps/akira.svg
-  - mkdir -p appdir/usr/share/icons/hicolor/24x24/apps/
-  - cp data/assets/icons/24x24/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/24x24/apps/akira.svg
-  - mkdir -p appdir/usr/share/icons/hicolor/32x32/apps/
-  - cp data/assets/icons/32x32/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/32x32/apps/akira.svg
-  - mkdir -p appdir/usr/share/icons/hicolor/48x48/apps/
-  - cp data/assets/icons/48x48/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/48x48/apps/akira.svg
-  - mkdir -p appdir/usr/share/icons/hicolor/64x64/apps/
-  - cp data/assets/icons/64x64/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/64x64/apps/akira.svg
-  - mkdir -p appdir/usr/share/icons/hicolor/128x128/apps/
-  - cp data/assets/icons/128x128/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/128x128/apps/akira.svg
-  - mkdir -p appdir/usr/share/icons/hicolor/scalable/apps/
-  - cp data/assets/icons/128x128/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/scalable/apps/akira.svg
+  - make DESTDIR=appdir -j$(nproc) install ; find ./appdir/
+  - mv ./appdir/usr/bin/com.github.alecaddd.akira ./appdir/usr/bin/akira
+  - mkdir -p ./appdir/usr/share/applications ; cp data/com.github.alecaddd.akira.desktop ./appdir/usr/share/applications/akira.desktop
+  - sed -i -e 's|com.github.alecaddd.||g' ./appdir/usr/share/applications/akira.desktop
+  - mkdir -p ./appdir/usr/share/icons/hicolor/16x16/apps/
+  - cp data/assets/icons/16x16/com.github.alecaddd.akira.svg ./appdir/usr/share/icons/hicolor/16x16/apps/akira.svg
+  - mkdir -p ./appdir/usr/share/icons/hicolor/24x24/apps/
+  - cp data/assets/icons/24x24/com.github.alecaddd.akira.svg ./appdir/usr/share/icons/hicolor/24x24/apps/akira.svg
+  - mkdir -p ./appdir/usr/share/icons/hicolor/32x32/apps/
+  - cp data/assets/icons/32x32/com.github.alecaddd.akira.svg ./appdir/usr/share/icons/hicolor/32x32/apps/akira.svg
+  - mkdir -p ./appdir/usr/share/icons/hicolor/48x48/apps/
+  - cp data/assets/icons/48x48/com.github.alecaddd.akira.svg ./appdir/usr/share/icons/hicolor/48x48/apps/akira.svg
+  - mkdir -p ./appdir/usr/share/icons/hicolor/64x64/apps/
+  - cp data/assets/icons/64x64/com.github.alecaddd.akira.svg ./appdir/usr/share/icons/hicolor/64x64/apps/akira.svg
+  - mkdir -p ./appdir/usr/share/icons/hicolor/128x128/apps/
+  - cp data/assets/icons/128x128/com.github.alecaddd.akira.svg ./appdir/usr/share/icons/hicolor/128x128/apps/akira.svg
+  - mkdir -p ./appdir/usr/share/icons/hicolor/scalable/apps/
+  - cp data/assets/icons/128x128/com.github.alecaddd.akira.svg ./appdir/usr/share/icons/hicolor/scalable/apps/akira.svg
   - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
   - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
   - export VERSION=$(git rev-parse --short HEAD) # linuxdeployqt uses this for naming the file
-  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -verbose=2 -bundle-non-qt-libs
+  - ./linuxdeployqt-continuous-x86_64.AppImage ./appdir/usr/share/applications/*.desktop -verbose=2 -bundle-non-qt-libs
 # - The following lines are a workaround for: GLib-GIO-ERROR **: Settings schema 'com.github.alecaddd.akira' is not installed  
   - ( cd ./appdir/usr/share/glib-2.0/schemas/ ; glib-compile-schemas . )
   - ./linuxdeployqt*.AppImage --appimage-extract
@@ -47,7 +53,7 @@ script:
   - PATH=./squashfs-root/usr/bin:$PATH ./squashfs-root/usr/bin/appimagetool -g ./appdir/
 
 after_success:
-  - find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+  - find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
   - # curl --upload-file Akira*.AppImage https://transfer.sh/Akira-git.$(git rev-parse --short HEAD)-x86_64.AppImage
   - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
   - bash upload.sh Akira*.AppImage*
