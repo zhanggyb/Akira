@@ -6,7 +6,6 @@ dist: xenial
 install:
  - sudo add-apt-repository ppa:vala-team/ppa -y
  - sudo add-apt-repository ppa:mc3man/trusty-media -y
- - sudo add-apt-repository ppa:mc3man/xerus-media -y
  - sudo add-apt-repository ppa:elementary-os/stable -y
  - sudo add-apt-repository ppa:elementary-os/os-patches -y
  - sudo apt-get update -qq
@@ -20,19 +19,19 @@ script:
   - mv appdir/usr/bin/com.github.alecaddd.akira appdir/usr/bin/akira
   - mkdir -p appdir/usr/share/applications ; cp data/com.github.alecaddd.akira.desktop appdir/usr/share/applications/akira.desktop
   - sed -i -e 's|com.github.alecaddd.||g' appdir/usr/share/applications/akira.desktop
-  - mkdir -p ./appdir/usr/share/icons/hicolor/16x16/apps/
+  - mkdir -p appdir/usr/share/icons/hicolor/16x16/apps/
   - cp data/assets/icons/16x16/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/16x16/apps/akira.svg
-  - mkdir -p ./appdir/usr/share/icons/hicolor/24x24/apps/
+  - mkdir -p appdir/usr/share/icons/hicolor/24x24/apps/
   - cp data/assets/icons/24x24/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/24x24/apps/akira.svg
-  - mkdir -p ./appdir/usr/share/icons/hicolor/32x32/apps/
+  - mkdir -p appdir/usr/share/icons/hicolor/32x32/apps/
   - cp data/assets/icons/32x32/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/32x32/apps/akira.svg
-  - mkdir -p ./appdir/usr/share/icons/hicolor/48x48/apps/
+  - mkdir -p appdir/usr/share/icons/hicolor/48x48/apps/
   - cp data/assets/icons/48x48/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/48x48/apps/akira.svg
-  - mkdir -p ./appdir/usr/share/icons/hicolor/64x64/apps/
+  - mkdir -p appdir/usr/share/icons/hicolor/64x64/apps/
   - cp data/assets/icons/64x64/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/64x64/apps/akira.svg
-  - mkdir -p ./appdir/usr/share/icons/hicolor/128x128/apps/
+  - mkdir -p appdir/usr/share/icons/hicolor/128x128/apps/
   - cp data/assets/icons/128x128/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/128x128/apps/akira.svg
-  - mkdir -p ./appdir/usr/share/icons/hicolor/scalable/apps/
+  - mkdir -p appdir/usr/share/icons/hicolor/scalable/apps/
   - cp data/assets/icons/128x128/com.github.alecaddd.akira.svg appdir/usr/share/icons/hicolor/scalable/apps/akira.svg
   - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
