@@ -43,6 +43,8 @@ public class Akira.Window : Gtk.ApplicationWindow {
         move (settings.pos_x, settings.pos_y);
         resize (settings.window_width, settings.window_height);
 
+        icon = new Gdk.Pixbuf.from_file ("./appdir/usr/share/icons/hicolor/scalable/apps/akira.svg");
+
         show_app ();
     }
 
