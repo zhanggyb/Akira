@@ -18,6 +18,10 @@ env:
   - DEPENDENCY_PACKAGES="cmake libaccounts-glib-dev libclutter-gtk-1.0-dev libdbus-glib-1-dev libgda-5.0-dev libgee-0.8-dev libglib2.0-dev libgpod-dev libgranite-dev libgudev-1.0-dev libevdev-dev libgsignon-glib-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgirepository1.0-dev libwebkitgtk-3.0-dev libgtksourceview-3.0-dev libgtk-3-dev libjson-glib-dev libnotify-dev libpeas-dev libsoup2.4-dev libtagc0-dev libxml2-dev libzeitgeist-2.0-dev valac"
 
 install:
+  - sudo add-apt-repository ppa:vala-team/ppa -y
+  - sudo add-apt-repository ppa:mc3man/trusty-media -y
+  - sudo apt-get update -qq
+  - sudo apt-get install -y checkinstall build-essential
   - docker pull elementary/docker:loki
   - docker run -v "$PWD":/tmp/build-dir elementary/docker:loki /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd /tmp/build-dir && cmake . && env CTEST_OUTPUT_ON_FAILURE=true make"
   - docker pull elementary/docker:loki-unstable
