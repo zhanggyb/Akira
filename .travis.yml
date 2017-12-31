@@ -23,9 +23,9 @@ install:
   # - sudo apt-get update -qq
   # - sudo apt-get install -y checkinstall build-essential
   - docker pull elementary/docker:loki
-  - docker run -v "$PWD":/home/travis/build/Alecaddd/Akira/ elementary/docker:loki /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd /home/travis/build/Alecaddd/Akira/ && cmake . && env CTEST_OUTPUT_ON_FAILURE=true make"
+  - docker run -v "$PWD":/ elementary/docker:loki /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd / && cmake . && env CTEST_OUTPUT_ON_FAILURE=true make"
   - docker pull elementary/docker:loki-unstable
-  - docker run -v "$PWD":/home/travis/build/Alecaddd/Akira/ elementary/docker:loki-unstable /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd /home/travis/build/Alecaddd/Akira/ && cmake . && env CTEST_OUTPUT_ON_FAILURE=true make"
+  - docker run -v "$PWD":/ elementary/docker:loki-unstable /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd / && cmake . && env CTEST_OUTPUT_ON_FAILURE=true make"
 
 script:
   - mkdir -p ./appdir/usr/bin
