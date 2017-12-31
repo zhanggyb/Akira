@@ -22,16 +22,17 @@ install:
   # - sudo add-apt-repository ppa:mc3man/trusty-media -y
   # - sudo apt-get update -qq
   # - sudo apt-get install -y checkinstall build-essential
+  - mkdir -p ./appdir/usr/bin
   - docker pull elementary/docker:loki
-  - docker run -v "$PWD":/ elementary/docker:loki /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd / && cmake . && env CTEST_OUTPUT_ON_FAILURE=true make"
+  - docker run -v "$PWD":/tmp/build-dir elementary/docker:loki /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd /tmp/build-dir && cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr && env CTEST_OUTPUT_ON_FAILURE=true make DESTDIR=appdir -j$(nproc) install ; find ./appdir/"
   - docker pull elementary/docker:loki-unstable
-  - docker run -v "$PWD":/ elementary/docker:loki-unstable /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd / && cmake . && env CTEST_OUTPUT_ON_FAILURE=true make"
+  - docker run -v "$PWD":/tmp/build-dir elementary/docker:loki-unstable /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd /tmp/build-dir && cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr && env CTEST_OUTPUT_ON_FAILURE=true make DESTDIR=appdir -j$(nproc) install ; find ./appdir/"
 
 script:
-  - mkdir -p ./appdir/usr/bin
-  - cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
-  - make -j$(nproc)
-  - make DESTDIR=appdir -j$(nproc) install ; find ./appdir/
+  # - mkdir -p ./appdir/usr/bin
+  # - cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  # - make -j$(nproc)
+  # - make DESTDIR=appdir -j$(nproc) install ; find ./appdir/
   - mv ./appdir/usr/bin/com.github.alecaddd.akira ./appdir/usr/bin/akira
   - mkdir -p ./appdir/usr/share/applications ; cp data/com.github.alecaddd.akira.desktop ./appdir/usr/share/applications/akira.desktop
   - sed -i -e 's|com.github.alecaddd.||g' ./appdir/usr/share/applications/akira.desktop
