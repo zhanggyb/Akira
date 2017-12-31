@@ -15,7 +15,7 @@ install:
   - sudo apt-get install elementary-os-overlay -y
   - sudo apt-get update -qq
 #  - sudo apt-get dist-upgrade -y
-  - sudo apt-get install -y checkinstall build-essential libappstream-dev libgirepository1.0-dev libgtk-3-dev libwebkitgtk-3.0-dev libgtksourceview-3.0-dev libglib2.0-dev libjson-glib-dev valac libgranite-dev libgudev-1.0-dev libevdev-dev libxml2-dev libgee-0.8-dev
+  - sudo apt-get install -y checkinstall build-essential libappstream-dev libgirepository1.0-dev libgtk-3-dev libwebkitgtk-3.0-dev libgtksourceview-3.0-dev libglib2.0-dev libjson-glib-dev valac libgranite-dev libgudev-1.0-dev libevdev-dev libxml2-dev libgee-0.8-dev libepoxy-dev libegl1-mesa-dev
   - wget http://archive.ubuntu.com/ubuntu/pool/main/g/gtk+3.0/libgtk-3-dev_3.18.9-1ubuntu3.3_amd64.deb
   - sudo dpkg -i libgtk-3-dev_3.18.9-1ubuntu3.3_amd64.deb
 
