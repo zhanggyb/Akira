@@ -15,7 +15,17 @@ jobs:
     - name: Install Dependencies
       run: |
         apt update
-        apt install -y libarchive-dev libgoocanvas-2.0-dev valac meson appstream-util xvfb at-spi2-core
+        apt install -y libarchive-dev libgoocanvas-2.0-dev valac meson appstream-util xvfb at-spi2-core git gtk-doc-tools build-essential autopoint autoconf libtool sed
+    - name: Install unreleased dependencies
+      run: |
+        git clone https://gitlab.gnome.org/GNOME/goocanvas
+        cd goocanvas
+        git checkout goocanvas-3.0
+        ./autogen.sh
+        ./configure --prefix=/usr PYTHON=python3
+        sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
+        make
+        make install
     - name: Build
       # env:
       #   DESTDIR: out
