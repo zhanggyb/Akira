@@ -471,14 +471,13 @@ public class Akira.Layouts.Partials.Artboard : Gtk.ListBoxRow {
         editing = false;
 
         var new_label = entry.get_text ();
+        window.event_bus.set_focus_on_canvas ();
 
         if (label.label == new_label) {
             return;
         }
 
         label.label = new_label;
-
-        window.event_bus.set_focus_on_canvas ();
     }
 
     private bool handle_focus_in (Gdk.EventFocus event) {

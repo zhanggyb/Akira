@@ -668,14 +668,13 @@ public class Akira.Layouts.Partials.Layer : Gtk.ListBoxRow {
         editing = false;
 
         var new_label = entry.get_text ();
+        window.event_bus.set_focus_on_canvas ();
 
         if (label.label == new_label) {
             return;
         }
 
         label.label = new_label;
-
-        window.event_bus.set_focus_on_canvas ();
     }
 
     private void lock_actions () {

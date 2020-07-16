@@ -53,14 +53,8 @@ public class Akira.Utils.AffineTransform : Object {
 
     public static void set_position (CanvasItem item, double? x = null, double? y = null) {
         if (item.artboard != null) {
-            var delta_x = x != null ? x - item.relative_x : 0.0;
-            var delta_y = y != null ? y - item.relative_y : 0.0;
-
             item.relative_x = x != null ? x : item.relative_x;
             item.relative_y = y != null ? y : item.relative_y;
-
-            item.translate (delta_x, delta_y);
-
             return;
         }
 

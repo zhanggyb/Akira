@@ -20,7 +20,6 @@
 */
 
 public class Akira.Partials.InputField : Gtk.EventBox {
-    //  private Akira.Window window;
     public Gtk.SpinButton entry { get; construct set; }
 
     public int chars { get; construct set; }
@@ -53,7 +52,6 @@ public class Akira.Partials.InputField : Gtk.EventBox {
     }
 
     construct {
-        //  window = get_toplevel () as Akira.Window;
         valign = Gtk.Align.CENTER;
 
         entry = new Gtk.SpinButton.with_range (0, 100, step);
@@ -119,6 +117,13 @@ public class Akira.Partials.InputField : Gtk.EventBox {
         // Arrow DOWN
         if (event.keyval == Gdk.Key.Down && (event.state & Gdk.ModifierType.SHIFT_MASK) > 0) {
             entry.spin (Gtk.SpinType.STEP_BACKWARD, 10);
+            return true;
+        }
+
+        // Enter or Escape
+        if (event.keyval == Gdk.Key.Return || event.keyval == Gdk.Key.Escape) {
+            Akira.Window window = get_toplevel () as Akira.Window;
+            window.event_bus.set_focus_on_canvas ();
             return true;
         }
 
