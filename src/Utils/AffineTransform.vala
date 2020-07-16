@@ -90,8 +90,6 @@ public class Akira.Utils.AffineTransform : Object {
         var delta_y = event_y - initial_event_y;
 
         if (item.artboard != null) {
-            item.artboard.get_transform (out matrix);
-
             item.relative_x += delta_x;
             item.relative_y += delta_y;
 
@@ -235,14 +233,21 @@ public class Akira.Utils.AffineTransform : Object {
         delta_x_accumulator += origin_move_delta_x;
         delta_y_accumulator += origin_move_delta_y;
 
-        selected_item.move (
-            origin_move_delta_x,
-            origin_move_delta_y,
-            delta_x_accumulator,
-            delta_y_accumulator
-        );
+        // If the origin cahnged, udpate the Matrix coordinates instead of the size.
+        if (origin_move_delta_x > 0 || origin_move_delta_y > 0) {
 
-        set_size (new_width, new_height, selected_item);
+        } else {
+            set_size (selected_item, new_width, new_height);
+        }
+
+        // selected_item.move (
+        //     origin_move_delta_x,
+        //     origin_move_delta_y,
+        //     delta_x_accumulator,
+        //     delta_y_accumulator
+        // );
+
+        // set_size (selected_item, new_width, new_height);
     }
 
     public static void rotate_from_event (
@@ -314,7 +319,7 @@ public class Akira.Utils.AffineTransform : Object {
             rotation = GLib.Math.round (rotation);
             // Cap new_rotation to the [0, 360] range
             var new_rotation = GLib.Math.fmod (item.rotation + rotation, 360);
-            set_rotation (new_rotation, item);
+            set_rotation (item, new_rotation);
             canvas.convert_to_item_space (item, ref initial_x, ref initial_y);
         }
 
@@ -322,7 +327,7 @@ public class Akira.Utils.AffineTransform : Object {
         prev_rotation_difference = 0.0;
     }
 
-    public static void set_size (double width, double height, Goo.CanvasItem item) {
+    public static void set_size (Goo.CanvasItem item, double width, double height) {
         if (width != -1) {
             item.set ("width", width);
         }
@@ -332,7 +337,7 @@ public class Akira.Utils.AffineTransform : Object {
         }
     }
 
-    public static void set_rotation (double rotation, CanvasItem item) {
+    public static void set_rotation (CanvasItem item, double rotation) {
         var center_x = item.get_coords ("width") / 2;
         var center_y = item.get_coords ("height") / 2;
 
@@ -343,28 +348,31 @@ public class Akira.Utils.AffineTransform : Object {
         item.rotation += actual_rotation;
     }
 
-    public static void flip_item (bool clicked, CanvasItem item, double sx, double sy) {
-        if (clicked) {
-            double x, y, width, height;
-            item.get ("x", out x, "y", out y, "width", out width, "height", out height);
-            var center_x = x + width / 2;
-            var center_y = y + height / 2;
+    public static void flip_item (CanvasItem item, double sx, double sy) {
+        double x, y, width, height;
+        item.get ("x", out x, "y", out y, "width", out width, "height", out height);
 
-            var transform = Cairo.Matrix.identity ();
-            item.get_transform (out transform);
-            double radians = item.rotation * (Math.PI / 180);
-            transform.translate (center_x, center_y);
-            transform.rotate (-radians);
-            transform.scale (sx, sy);
-            transform.rotate (radians);
-            transform.translate (-center_x, -center_y);
-            item.set_transform (transform);
+        var center_x = x + width / 2;
+        var center_y = y + height / 2;
+
+        if (item.artboard != null) {
+            item.scale (sx, sy);
+            item.translate (center_x, center_y);
+
+            item.artboard.trigger_change ();
             return;
         }
 
         var transform = Cairo.Matrix.identity ();
         item.get_transform (out transform);
+        double radians = item.rotation * (Math.PI / 180);
+
+        transform.translate (center_x, center_y);
+        transform.rotate (-radians);
         transform.scale (sx, sy);
+        transform.rotate (radians);
+        transform.translate (-center_x, -center_y);
+
         item.set_transform (transform);
     }
 

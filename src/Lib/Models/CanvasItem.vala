@@ -219,8 +219,7 @@ public interface Akira.Lib.Models.CanvasItem : Goo.CanvasItemSimple, Goo.CanvasI
         var width = get_coords ("width");
         var height = get_coords ("height");
 
-        // Rotate around the center by the amount
-        // in item.rotation
+        // Rotate around the center by the amount in item.rotation.
         transform.translate (width / 2, height / 2);
         transform.rotate (Utils.AffineTransform.deg_to_rad (rotation));
         transform.translate (- (width / 2), - (height / 2));
@@ -354,10 +353,7 @@ public interface Akira.Lib.Models.CanvasItem : Goo.CanvasItemSimple, Goo.CanvasI
         var item_x = relative_x;
         var item_y = relative_y;
 
-        canvas.convert_from_item_space (
-            artboard,
-            ref item_x,
-            ref item_y);
+        canvas.convert_from_item_space (artboard, ref item_x, ref item_y);
 
         if (
             x >= item_x
