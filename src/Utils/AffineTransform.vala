@@ -35,9 +35,6 @@ public class Akira.Utils.AffineTransform : Object {
         double item_x = item.get_coords ("x");
         double item_y = item.get_coords ("y");
 
-        // debug (@"item x: $(item_x) y: $(item_y)");
-        // debug (@"Item has artboard: $(item.artboard != null)");
-
         item.canvas.convert_from_item_space (item, ref item_x, ref item_y);
 
         if (item.artboard != null) {
@@ -58,9 +55,7 @@ public class Akira.Utils.AffineTransform : Object {
             return;
         }
 
-        Cairo.Matrix matrix;
-        item.get_transform (out matrix);
-
+        var matrix = item.get_real_transform ();
         double new_x = (x != null) ? x : matrix.x0;
         double new_y = (y != null) ? y : matrix.y0;
 
@@ -78,23 +73,19 @@ public class Akira.Utils.AffineTransform : Object {
         ref double initial_event_x,
         ref double initial_event_y
     ) {
-        Cairo.Matrix matrix;
-
         var delta_x = event_x - initial_event_x;
         var delta_y = event_y - initial_event_y;
 
         if (item.artboard != null) {
             item.relative_x += delta_x;
             item.relative_y += delta_y;
-
-            item.translate (delta_x, delta_y);
         } else {
-            item.get_transform (out matrix);
-
+            var matrix = item.get_real_transform ();
             var new_matrix = Cairo.Matrix (
                 matrix.xx, matrix.yx, matrix.xy, matrix.yy,
                 (matrix.x0 + delta_x), (matrix.y0 + delta_y)
             );
+
             item.set_transform (new_matrix);
         }
 
@@ -222,12 +213,12 @@ public class Akira.Utils.AffineTransform : Object {
         origin_move_delta_x = new_width == MIN_SIZE ? 0 : fix_size (origin_move_delta_x);
         origin_move_delta_y = new_height == MIN_SIZE ? 0 : fix_size (origin_move_delta_y);
 
-        debug ("Y: %f - H: %f", origin_move_delta_y, new_height);
+        //  debug ("Y: %f - H: %f", origin_move_delta_y, new_height);
 
         delta_x_accumulator += origin_move_delta_x;
         delta_y_accumulator += origin_move_delta_y;
 
-        // If the origin cahnged, udpate the Matrix coordinates instead of the size.
+        // If the origin changed, update the Matrix coordinates instead of the size.
         if (origin_move_delta_x > 0 || origin_move_delta_y > 0) {
 
         } else {
@@ -349,16 +340,23 @@ public class Akira.Utils.AffineTransform : Object {
         var center_x = x + width / 2;
         var center_y = y + height / 2;
 
-        if (item.artboard != null) {
-            item.scale (sx, sy);
-            item.translate (center_x, center_y);
+        //  if (item.artboard != null) {
+        //      var transform = Cairo.Matrix.identity ();
+        //      item.artboard.get_transform (out transform);
+        //      transform = item.compute_transform (transform);
+        //      double radians = item.rotation * (Math.PI / 180);
 
-            item.artboard.trigger_change ();
-            return;
-        }
+        //      transform.translate (center_x, center_y);
+        //      transform.rotate (-radians);
+        //      transform.scale (sx, sy);
+        //      transform.rotate (radians);
+        //      transform.translate (-center_x, -center_y);
 
-        var transform = Cairo.Matrix.identity ();
-        item.get_transform (out transform);
+        //      item.set_transform (transform);
+        //      return;
+        //  }
+
+        var transform = item.get_real_transform ();
         double radians = item.rotation * (Math.PI / 180);
 
         transform.translate (center_x, center_y);
