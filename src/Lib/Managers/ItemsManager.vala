@@ -655,7 +655,6 @@ public class Akira.Lib.Managers.ItemsManager : Object {
         // Save the coordinates before removing the item.
         var x = item.get_global_coord ("x");
         var y = item.get_global_coord ("y");
-        var rotation = item.rotation;
 
         // If the item was moved from inside an Artboard to the emtpy Canvas.
         if (item.artboard != null && new_artboard == null) {
@@ -676,7 +675,6 @@ public class Akira.Lib.Managers.ItemsManager : Object {
             window.event_bus.item_inserted (item);
             window.event_bus.request_add_item_to_selection (item);
             window.event_bus.file_edited ();
-            Utils.AffineTransform.set_rotation (item, rotation);
 
             return;
         }
@@ -701,7 +699,6 @@ public class Akira.Lib.Managers.ItemsManager : Object {
             window.event_bus.item_inserted (item);
             window.event_bus.request_add_item_to_selection (item);
             window.event_bus.file_edited ();
-            Utils.AffineTransform.set_rotation (item, rotation);
 
             return;
         }
