@@ -56,12 +56,9 @@ public class Akira.Utils.AffineTransform : Object {
         }
 
         var matrix = item.get_real_transform ();
-        //  double new_x = (x != null) ? x : matrix.x0;
-        //  double new_y = (y != null) ? y : matrix.y0;
         matrix.x0 = (x != null) ? x : matrix.x0;
         matrix.y0 = (y != null) ? y : matrix.y0;
 
-        //  var new_matrix = Cairo.Matrix (matrix.xx, matrix.yx, matrix.xy, matrix.yy, new_x, new_y);
         item.set_transform (matrix);
     }
 
