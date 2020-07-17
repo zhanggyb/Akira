@@ -321,22 +321,30 @@ public class Akira.Utils.AffineTransform : Object {
     public static void set_rotation (CanvasItem item, double rotation) {
         var center_x = item.get_coords ("width") / 2;
         var center_y = item.get_coords ("height") / 2;
-
         var actual_rotation = rotation - item.rotation;
 
         item.rotate (actual_rotation, center_x, center_y);
-
-        item.rotation += actual_rotation;
     }
 
     public static void flip_item (CanvasItem item, double sx, double sy) {
         double x, y, width, height;
         item.get ("x", out x, "y", out y, "width", out width, "height", out height);
 
-        var center_x = x + width / 2;
-        var center_y = y + height / 2;
+        double center_x = x + width / 2;
+        double center_y = y + height / 2;
+        double radians = item.rotation * (Math.PI / 180);
 
-        //  if (item.artboard != null) {
+        if (item.artboard != null) {
+            double original_rotation = item.rotation;
+            item.relative_x += center_x;
+            item.relative_y += center_y;
+            //  item.rotation = -radians;
+            item.rotate (0, center_x, center_y);
+            item.scale (sx, sy);
+            item.rotate (original_rotation, center_x, center_y);
+            //  item.rotation = radians;
+            item.relative_x -= center_x;
+            item.relative_y -= center_y;
         //      var transform = Cairo.Matrix.identity ();
         //      item.artboard.get_transform (out transform);
         //      transform = item.compute_transform (transform);
@@ -349,12 +357,10 @@ public class Akira.Utils.AffineTransform : Object {
         //      transform.translate (-center_x, -center_y);
 
         //      item.set_transform (transform);
-        //      return;
-        //  }
+            return;
+        }
 
         var transform = item.get_real_transform ();
-        double radians = item.rotation * (Math.PI / 180);
-
         transform.translate (center_x, center_y);
         transform.rotate (-radians);
         transform.scale (sx, sy);
