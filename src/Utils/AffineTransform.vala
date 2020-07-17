@@ -56,11 +56,13 @@ public class Akira.Utils.AffineTransform : Object {
         }
 
         var matrix = item.get_real_transform ();
-        double new_x = (x != null) ? x : matrix.x0;
-        double new_y = (y != null) ? y : matrix.y0;
+        //  double new_x = (x != null) ? x : matrix.x0;
+        //  double new_y = (y != null) ? y : matrix.y0;
+        matrix.x0 = (x != null) ? x : matrix.x0;
+        matrix.y0 = (y != null) ? y : matrix.y0;
 
-        var new_matrix = Cairo.Matrix (matrix.xx, matrix.yx, matrix.xy, matrix.yy, new_x, new_y);
-        item.set_transform (new_matrix);
+        //  var new_matrix = Cairo.Matrix (matrix.xx, matrix.yx, matrix.xy, matrix.yy, new_x, new_y);
+        item.set_transform (matrix);
     }
 
     /**
@@ -81,12 +83,9 @@ public class Akira.Utils.AffineTransform : Object {
             item.relative_y += delta_y;
         } else {
             var matrix = item.get_real_transform ();
-            var new_matrix = Cairo.Matrix (
-                matrix.xx, matrix.yx, matrix.xy, matrix.yy,
-                (matrix.x0 + delta_x), (matrix.y0 + delta_y)
-            );
-
-            item.set_transform (new_matrix);
+            matrix.x0 += delta_x;
+            matrix.y0 += delta_y;
+            item.set_transform (matrix);
         }
 
         initial_event_x = event_x;
@@ -364,6 +363,8 @@ public class Akira.Utils.AffineTransform : Object {
         transform.scale (sx, sy);
         transform.rotate (radians);
         transform.translate (-center_x, -center_y);
+
+        //  debug ("X: %f - Y: %f - R: %f", center_x, center_y, radians);
 
         item.set_transform (transform);
     }
