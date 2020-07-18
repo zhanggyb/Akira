@@ -426,14 +426,16 @@ public class Akira.Services.ActionManager : Object {
                 files.@foreach ((file) => {
                     if (!Akira.Utils.Image.is_valid_image (file)) {
                         window.event_bus.canvas_notification (
-                            _("Error! .%s files are not supported!"
-                        ).printf (Akira.Utils.Image.get_extension (file)));
+                            _("Error! .%s files are not supported!")
+                            .printf (Akira.Utils.Image.get_extension (file)));
+                        dialog.destroy ();
                         return;
                     }
 
                     var manager = new Akira.Lib.Managers.ImageManager (file, files.index (file));
                     window.items_manager.insert_image (manager);
                 });
+                dialog.destroy ();
                 break;
         }
         dialog.destroy ();
