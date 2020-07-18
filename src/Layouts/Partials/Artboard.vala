@@ -110,7 +110,7 @@ public class Akira.Layouts.Partials.Artboard : Gtk.ListBoxRow {
         container.activate_on_single_click = false;
         container.selection_mode = Gtk.SelectionMode.SINGLE;
 
-        // Block all the events from bubbling up and triggering the Artbord's events.
+        // Block all the events from bubbling up and triggering the Artboard's events.
         container.event.connect (() => {
             return true;
         });
