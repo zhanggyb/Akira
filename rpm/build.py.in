@@ -46,8 +46,8 @@ def create_parser():
 
     parser.add_argument("-f", "--format", dest="format", default="tar.gz",
                         help="File format of the source code archive, default: tar.gz")
-    parser.add_argument("-p", "--prefix", dest="prefix", default="@project_name@-@version@/",
-                        help="Prefix string to each filename in archive, default: @project_name@-@version@/")
+    parser.add_argument("-p", "--prefix", dest="prefix", default="%s-%s/" % (PROJECT_NAME, VERSION),
+                        help="Prefix string to each filename in archive, default: %s-%s/" % (PROJECT_NAME, VERSION))
 
     parser.add_argument("package", choices=('all', 'rpm', 'srpm'),
                         help="The package to be built: rpm or srpm")
@@ -121,8 +121,9 @@ def main(args=None):
 
     subprocess.run([RPMDEV_SETUPTREE], check=True)
 
-    p = subprocess.Popen(
-        [RPM, '--eval', '%{_sourcedir}'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    p = subprocess.Popen([RPM, '--eval', '%{_sourcedir}'],
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.DEVNULL)
     rpm_source_dir, _ = p.communicate()
     rpm_source_dir = rpm_source_dir.decode().strip()
 
