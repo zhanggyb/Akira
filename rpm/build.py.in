@@ -1,0 +1,164 @@
+#!/usr/bin/env python3
+#
+
+"""A simple Python3 script to build rpm package of @project_name@."""
+
+import sys
+import os
+import shutil
+import argparse
+import subprocess
+import tempfile
+
+from pathlib import Path
+
+
+SOURCE_ROOT = "@source_root@"
+BUILD_ROOT = "@build_root@"
+# PROJECT_NAME = "@project_name@"
+PROJECT_NAME = "akira"
+# VERSION = "@version@"
+VERSION = "0.0.1"
+SPEC_NAME = "@spec_name@"
+
+
+GIT = shutil.which('git')
+TAR = shutil.which('tar')
+RPM = shutil.which('rpm')
+RPMDEV_SETUPTREE = shutil.which('rpmdev-setuptree')
+RPMBUILD = shutil.which('rpmbuild')
+
+
+def create_parser():
+    parser = argparse.ArgumentParser()
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("-b", "--branch", dest="branch",
+                       help="Build the assigned branch to RPM")
+    group.add_argument("-t", "--tag", dest="tag",
+                       help="Build the assigned tag to RPM")
+    group.add_argument("--hash", dest="hash",
+                       help="Build the assigned commit hash to RPM")
+    group.add_argument("--head", dest="head", action="store_true",
+                       help="Build HEAD to RPM")
+    group.add_argument("-l", "--local", dest="local", action="store_true",
+                       help="Build local working tree to RPM")
+
+    parser.add_argument("-f", "--format", dest="format", default="tar.gz",
+                        help="File format of the source code archive, default: tar.gz")
+    parser.add_argument("-p", "--prefix", dest="prefix", default="@project_name@-@version@/",
+                        help="Prefix string to each filename in archive, default: @project_name@-@version@/")
+
+    parser.add_argument("package", choices=('all', 'rpm', 'srpm'),
+                        help="The package to be built: rpm or srpm")
+
+    return parser
+
+
+def git_archive(fmt, prefix, commit, filename):
+    cmd = [GIT, 'archive']
+    cmd.append("--format=%s" % fmt)
+    cmd.append("--prefix=%s" % prefix)
+    cmd.append("--output=%s.%s" % (filename, fmt))
+    cmd.append(commit)
+    subprocess.run(cmd, check=True)
+
+
+def archive_working_tree(fmt, filename):
+    """Archive the current git working tree."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        pwd = Path.cwd()
+        if not Path(filename).is_absolute():
+            filename = os.path.join(pwd, filename)
+        dirname = "%s-%s" % (PROJECT_NAME, VERSION)
+        linkdir = os.path.join(tmpdir, dirname)
+
+        os.symlink(pwd, linkdir)
+        os.chdir(tmpdir)
+
+        cmd = [TAR, '-czf', "%s.%s" %
+               (filename, fmt), "--exclude=%s/./.git*" % dirname]
+
+        gitignore_path = "%s/.gitignore" % linkdir
+        if not os.path.exists(gitignore_path):
+            cmd.append("%s/." % dirname)
+            subprocess.run(cmd, check=True)
+            return
+
+        with open(gitignore_path, 'r') as f:
+            while True:
+                line = f.readline()
+                if not line:
+                    break
+                line_stripped = line.strip()
+                if line_stripped == "":
+                    continue
+                cmd.append("--exclude=%s/./%s" %
+                           (dirname, line_stripped.lstrip('/').rstrip('/')))
+
+        cmd.append("%s/." % dirname)
+        subprocess.run(cmd, check=True)
+
+
+def main(args=None):
+    """The main routine."""
+
+    CMDS = (
+        (GIT, 'git'),
+        (TAR, 'tar'),
+        (RPM, 'rpm'),
+        (RPMDEV_SETUPTREE, 'rpmdev-setuptree'),
+        (RPMBUILD, 'rpmbuild')
+    )
+    for i in CMDS:
+        if i[0] is None:
+            print("Error! No '%s' command is found in PATH!" %
+                  i[1], file=sys.stderr)
+            return 1
+
+    parser = create_parser()
+    options = parser.parse_args(args)
+
+    subprocess.run([RPMDEV_SETUPTREE], check=True)
+
+    p = subprocess.Popen(
+        [RPM, '--eval', '%{_sourcedir}'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    rpm_source_dir, _ = p.communicate()
+    rpm_source_dir = rpm_source_dir.decode().strip()
+
+    filename = "%s-%s" % (PROJECT_NAME, VERSION)
+    filename = os.path.join(rpm_source_dir, filename)
+
+    os.chdir(SOURCE_ROOT)
+
+    if options.branch:
+        git_archive(options.format, options.prefix, options.branch, filename)
+    elif options.tag:
+        git_archive(options.format, options.prefix, options.tag, filename)
+    elif options.hash:
+        git_archive(options.format, options.prefix, options.tag, filename)
+    elif options.head:
+        git_archive(options.format, options.prefix, 'HEAD', filename)
+    elif options.local:
+        archive_working_tree(options.format, filename)
+    else:
+        parser.print_help()
+        sys.exit(1)
+
+    print("Create archive: %s.%s" % (filename, options.format))
+    os.chdir(BUILD_ROOT)
+
+    spec_file_name = "rpm/%s.spec" % SPEC_NAME
+
+    building_option = '-ba'     # Default is 'all'
+    if options.package == 'rpm':
+        building_option = '-bb'
+    elif options.package == 'srpm':
+        building_option = '-bs'
+
+    result = subprocess.run([RPMBUILD, building_option, spec_file_name])
+    return result
+
+
+if __name__ == "__main__":
+    sys.exit(main())

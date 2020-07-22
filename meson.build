@@ -64,9 +64,33 @@ gettext_package = application_id
 add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format (gettext_package), language:'c')
 add_global_arguments(['-DG_LOG_DOMAIN="Akira"'], language:'c')
 
+PROJECT_URL = 'https://github.com/akiraux/Akira'
+PROJECT_URL_BUG = 'https://github.com/akiraux/Akira/issues'
+
 subdir('src')
 subdir('data')
 subdir('po')
 subdir('tests')
+
+r = run_command('grep', '-Po', '^ID=\K.*', '/etc/os-release')
+if r.returncode() == 0
+    distro_id = r.stdout().strip()
+else
+    distro_id = 'undefined'
+endif
+
+# TODO: add more rpm-based distributions
+if distro_id == 'fedora'
+    git = find_program('git', required: false)
+    tar = find_program('tar', required: false)
+    rpm = find_program('rpm', required: false)
+    rpmbuild = find_program('rpmbuild', required: false)
+    rpmdev_setuptree = find_program('rpmdev-setuptree', required: false)
+
+    if git.found() and tar.found() and rpm.found() and rpmbuild.found() and rpmdev_setuptree.found()
+        subdir('rpm')
+    endif
+endif
+
 
 meson.add_install_script('build-aux/meson/post_install.py')

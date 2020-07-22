@@ -1,0 +1,98 @@
+# akira.spec
+#
+%global srcname akira
+%global _vpath_srcdir %{srcname}-%{version}/
+
+%global commit @git_hash@
+%global short_commit %(c=%{commit}; echo ${c:0:7})
+%global short_today @short_today@
+%global git_build @git_build@
+
+Name:           akira
+# Version:        @version@
+Version:        0.0.1
+
+%if %{git_build} == 1
+Release:        0.%{short_today}git%{short_commit}%{?dist}
+%else
+Release:        1%{?dist}
+%endif
+
+Summary:        The Linux Design Tool
+
+License:        GPL-3.0
+URL:            @project_url@
+Source0:        akira-%{version}.tar.gz
+
+BuildRequires:  meson
+BuildRequires:  ninja-build
+BuildRequires:	glib2-devel
+BuildRequires:  cairo-devel
+BuildRequires:	vala
+BuildRequires:  libarchive-devel
+BuildRequires:  granite-devel
+BuildRequires:  json-glib-devel
+BuildRequires:  libgudev
+BuildRequires:  libevdev
+BuildRequires:  gtksourceview3-devel
+BuildRequires:  libxml2-devel
+BuildRequires:  goocanvas2-devel
+
+Requires:   glib2
+Requires:   cairo
+Requires:   json-glib
+Requires:   granite
+Requires:   libgudev
+Requires:   libevdev
+Requires:   gtksourceview3
+Requires:   libxml2
+Requires:   goocanvas2
+
+
+%description
+Akira is a native Linux Design application built in Vala and GTK. Akira focuses
+on offering a modern and fast approach to UI and UX Design, mainly targeting web
+designers and graphic designers. The main goal is to offer a valid and
+professional solution for designers who want to use Linux as their main OS.
+
+
+%prep
+%autosetup -c
+
+
+%build
+%meson
+%meson_build
+
+
+%install
+rm -rf $RPM_BUILD_ROOT
+%meson_install
+
+
+%files
+%{_bindir}/*
+%{_datadir}/*
+%exclude %{_datadir}/applications/mimeinfo.cache
+%exclude %{_datadir}/glib-2.0/schemas/gschemas.compiled
+%exclude %{_datadir}/icons/hicolor/icon-theme.cache
+
+
+%post
+
+gtk-update-icon-cache -qtf %{_datadir}/icons/hicolor/ || true
+glib-compile-schemas %{_datadir}/glib-2.0/schemas/ 1>/dev/null 2>&1 || true
+update-desktop-database -q %{_datadir}/applications/ || true
+
+
+%postun
+
+gtk-update-icon-cache -qtf %{_datadir}/icons/hicolor/ || true
+glib-compile-schemas %{_datadir}/glib-2.0/schemas/ 1>/dev/null 2>&1 || true
+update-desktop-database -q %{_datadir}/applications/ || true
+
+
+%changelog
+
+* @today@ Freeman Zhang - %{version}-%{release}
+- See @project_url@ for detailed changelog.
